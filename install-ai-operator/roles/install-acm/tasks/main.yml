@@ -13,6 +13,17 @@
     content: "{{ pull_secret }}"
     dest: "{{ temporary_directory.path }}/pull_secret"
 
+- name: Copy namespace and hive template
+  template:
+    src: "templates/hiveconfig.yaml.j2"
+    dest: "{{ temporary_directory.path }}/hiveconfig.yaml"
+
+- name: Apply the hive config
+  ansible.builtin.shell:
+    cmd: "oc apply -f {{ temporary_directory.path }}/hiveconfig.yaml"
+  environment:
+    KUBECONFIG: "{{ temporary_path }}/kubeconfig"
+
 - name: Clone the ACM project
   ansible.builtin.git:
     repo: https://github.com/open-cluster-management/deploy
